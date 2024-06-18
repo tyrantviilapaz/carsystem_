@@ -1,0 +1,196 @@
+<html>
+<head>
+<title>Login.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Login.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">border</span><span class="s2">.</span><span class="s1">EmptyBorder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">Login </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JTextField loginUsernameField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JPasswordField loginPasswordField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">UserService userService</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">Login</span><span class="s2">() {</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s1">userService </span><span class="s2">= </span><span class="s0">new </span><span class="s1">UserService</span><span class="s2">();</span>
+
+        <span class="s3">// Split the panel into two parts</span>
+        <span class="s1">JPanel mainPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">mainPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">createLoginPanel</span><span class="s2">(), </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">WEST</span><span class="s2">);</span>
+        <span class="s1">mainPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">createImagePanel</span><span class="s2">(), </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">mainPanel</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createLoginPanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel loginPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridBagLayout</span><span class="s2">());</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s4">540</span><span class="s2">, </span><span class="s4">720</span><span class="s2">));</span>
+
+        <span class="s1">GridBagConstraints gbc </span><span class="s2">= </span><span class="s0">new </span><span class="s1">GridBagConstraints</span><span class="s2">();</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">insets </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Insets</span><span class="s2">(</span><span class="s4">10</span><span class="s2">, </span><span class="s4">10</span><span class="s2">, </span><span class="s4">10</span><span class="s2">, </span><span class="s4">10</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">fill </span><span class="s2">= </span><span class="s1">GridBagConstraints</span><span class="s2">.</span><span class="s1">HORIZONTAL</span><span class="s2">;</span>
+
+        <span class="s3">// Title</span>
+        <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;LOGIN&quot;</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s5">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s4">24</span><span class="s2">));</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s4">2</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Subtitle</span>
+        <span class="s1">JLabel subtitleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Enter your credentials to access your account.&quot;</span><span class="s2">);</span>
+        <span class="s1">subtitleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">1</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">subtitleLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Email Label</span>
+        <span class="s1">JLabel usernameLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Email:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">2</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s4">1</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">usernameLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Email Field</span>
+        <span class="s1">loginUsernameField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s4">1</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">loginUsernameField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Password Label</span>
+        <span class="s1">JLabel passwordLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Password:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">3</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">passwordLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Password Field</span>
+        <span class="s1">loginPasswordField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPasswordField</span><span class="s2">();</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s4">1</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">loginPasswordField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Remember Me Checkbox</span>
+        <span class="s1">JCheckBox rememberMeCheckBox </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JCheckBox</span><span class="s2">(</span><span class="s5">&quot;Remember me&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">4</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s4">2</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">rememberMeCheckBox</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Login Button</span>
+        <span class="s1">JButton loginButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Login&quot;</span><span class="s2">);</span>
+        <span class="s1">loginButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+        <span class="s1">loginButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">loginButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">loginButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">loginUser</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">5</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s4">2</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">loginButton</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Social Login</span>
+        <span class="s1">JPanel socialLoginPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s4">1</span><span class="s2">, </span><span class="s4">2</span><span class="s2">, </span><span class="s4">10</span><span class="s2">, </span><span class="s4">10</span><span class="s2">));</span>
+        <span class="s1">JButton googleButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Google&quot;</span><span class="s2">);</span>
+        <span class="s1">JButton facebookButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Facebook&quot;</span><span class="s2">);</span>
+        <span class="s1">socialLoginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">googleButton</span><span class="s2">);</span>
+        <span class="s1">socialLoginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">facebookButton</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">6</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">socialLoginPanel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Register Button</span>
+        <span class="s1">JPanel registerPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">());</span>
+        <span class="s1">JLabel registerLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Don't have an account?&quot;</span><span class="s2">);</span>
+        <span class="s1">JButton registerButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Sign Up&quot;</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLUE</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setBorderPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setContentAreaFilled</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">JFrame parentFrame </span><span class="s2">= (</span><span class="s1">JFrame</span><span class="s2">) </span><span class="s1">SwingUtilities</span><span class="s2">.</span><span class="s1">getWindowAncestor</span><span class="s2">(</span><span class="s1">Login</span><span class="s2">.</span><span class="s0">this</span><span class="s2">);</span>
+                <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Register</span><span class="s2">());</span>
+                <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">revalidate</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">registerLabel</span><span class="s2">);</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">registerButton</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s4">7</span><span class="s2">;</span>
+        <span class="s1">loginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">registerPanel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">loginPanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createImagePanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel imagePanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">imagePanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">);</span>
+
+        <span class="s3">// Add the car name</span>
+        <span class="s1">JLabel carNameLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Car Selling&quot;</span><span class="s2">);</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s5">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s4">50</span><span class="s2">));</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s4">20</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s2">));</span>
+        <span class="s1">imagePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">carNameLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s3">// Add the image</span>
+        <span class="s1">JLabel imageLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">();</span>
+        <span class="s1">imageLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">ImageIcon carImage </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s5">&quot;assets/carbanner.png&quot;</span><span class="s2">);</span>
+        <span class="s1">imageLabel</span><span class="s2">.</span><span class="s1">setIcon</span><span class="s2">(</span><span class="s1">carImage</span><span class="s2">);</span>
+        <span class="s1">imagePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">imageLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">imagePanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loginUser</span><span class="s2">() {</span>
+        <span class="s1">String email </span><span class="s2">= </span><span class="s1">loginUsernameField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String password </span><span class="s2">= </span><span class="s0">new </span><span class="s1">String</span><span class="s2">(</span><span class="s1">loginPasswordField</span><span class="s2">.</span><span class="s1">getPassword</span><span class="s2">());</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">email</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">password</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;All fields must be filled out.&quot;</span><span class="s2">);</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">User user </span><span class="s2">= </span><span class="s1">userService</span><span class="s2">.</span><span class="s1">getUserByUsername</span><span class="s2">(</span><span class="s1">email</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">user </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">user</span><span class="s2">.</span><span class="s1">getPassword</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">password</span><span class="s2">)) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;Logged in successfully!&quot;</span><span class="s2">);</span>
+
+            <span class="s1">JFrame parentFrame </span><span class="s2">= (</span><span class="s1">JFrame</span><span class="s2">) </span><span class="s1">SwingUtilities</span><span class="s2">.</span><span class="s1">getWindowAncestor</span><span class="s2">(</span><span class="s0">this</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">user</span><span class="s2">.</span><span class="s1">isAdmin</span><span class="s2">()) {</span>
+                <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Admin</span><span class="s2">(</span><span class="s1">parentFrame</span><span class="s2">));</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">UserView</span><span class="s2">(</span><span class="s1">user</span><span class="s2">.</span><span class="s1">getName</span><span class="s2">(), </span><span class="s1">parentFrame</span><span class="s2">));</span>
+            <span class="s2">}</span>
+            <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">revalidate</span><span class="s2">();</span>
+            <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">repaint</span><span class="s2">();</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;Invalid email or password.&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

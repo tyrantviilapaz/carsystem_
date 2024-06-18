@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>userService.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+userService.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+
+ <span class="s0">class </span><span class="s1">UserService </span><span class="s2">{</span>
+
+    <span class="s0">public </span><span class="s1">User getUserByUsername</span><span class="s2">(</span><span class="s1">String email</span><span class="s2">) {</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s3">&quot;SELECT * FROM users WHERE email = ?&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s4">1</span><span class="s2">, </span><span class="s1">email</span><span class="s2">);</span>
+            <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">();</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                <span class="s1">User user </span><span class="s2">= </span><span class="s0">new </span><span class="s1">User</span><span class="s2">();</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setUserId</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s3">&quot;userId&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setName</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;name&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setAddress</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;address&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setContactNum</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;contactNum&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setEmail</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;email&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setPassword</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;password&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setAdmin</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getBoolean</span><span class="s2">(</span><span class="s3">&quot;isAdmin&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setDateOfPurchase</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDate</span><span class="s2">(</span><span class="s3">&quot;dateOfPurchase&quot;</span><span class="s2">));</span>
+                <span class="s1">user</span><span class="s2">.</span><span class="s1">setAmountPaid</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s3">&quot;amountPayed&quot;</span><span class="s2">));</span>
+
+                <span class="s0">return </span><span class="s1">user</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+        <span class="s2">}</span>
+        <span class="s0">return null</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">String</span><span class="s2">[] </span><span class="s1">fetchCarsForSale</span><span class="s2">() {</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s3">&quot;SELECT * FROM cars WHERE status = 'For Sale'&quot;</span><span class="s2">;</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">carsForSale </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">Statement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">createStatement</span><span class="s2">();</span>
+             <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+
+            <span class="s0">while </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                <span class="s1">String carDetails </span><span class="s2">= </span><span class="s3">&quot;Model: &quot; </span><span class="s2">+ </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;model&quot;</span><span class="s2">) +</span>
+                        <span class="s3">&quot;, Price: &quot; </span><span class="s2">+ </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s3">&quot;price&quot;</span><span class="s2">) +</span>
+                        <span class="s3">&quot;, Mileage: &quot; </span><span class="s2">+ </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s3">&quot;mileage&quot;</span><span class="s2">) +</span>
+                        <span class="s3">&quot;, Color: &quot; </span><span class="s2">+ </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s3">&quot;color&quot;</span><span class="s2">);</span>
+                <span class="s1">carsForSale</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">carDetails</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s1">carsForSale</span><span class="s2">.</span><span class="s1">toArray</span><span class="s2">(</span><span class="s0">new </span><span class="s1">String</span><span class="s2">[</span><span class="s4">0</span><span class="s2">]);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

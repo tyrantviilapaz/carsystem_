@@ -1,0 +1,176 @@
+<html>
+<head>
+<title>editDialog.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+editDialog.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">File</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">Connection</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">PreparedStatement</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">ResultSet</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">SQLException</span><span class="s2">;</span>
+ <span class="s0">class </span><span class="s1">EditCarDialog </span><span class="s0">extends </span><span class="s1">JDialog </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JTextField modelField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField priceField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField mileageField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField colorField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextArea descriptionArea</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField statusField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField photosField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField stocksField</span><span class="s2">; </span><span class="s3">// New field for stocks</span>
+    <span class="s0">private int </span><span class="s1">carId</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">carView parentPanel</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">EditCarDialog</span><span class="s2">(</span><span class="s0">int </span><span class="s1">carId</span><span class="s2">, </span><span class="s1">carView parentPanel</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">carId </span><span class="s2">= </span><span class="s1">carId</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">parentPanel </span><span class="s2">= </span><span class="s1">parentPanel</span><span class="s2">;</span>
+        <span class="s1">setTitle</span><span class="s2">(</span><span class="s4">&quot;Edit Car&quot;</span><span class="s2">);</span>
+        <span class="s1">setSize</span><span class="s2">(</span><span class="s5">400</span><span class="s2">, </span><span class="s5">400</span><span class="s2">);</span>
+        <span class="s1">setLocationRelativeTo</span><span class="s2">(</span><span class="s1">parentPanel</span><span class="s2">);</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">2</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+
+        <span class="s1">JLabel modelLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Model:&quot;</span><span class="s2">);</span>
+        <span class="s1">modelField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">JLabel priceLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Price:&quot;</span><span class="s2">);</span>
+        <span class="s1">priceField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">JLabel mileageLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Mileage:&quot;</span><span class="s2">);</span>
+        <span class="s1">mileageField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">JLabel colorLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Color:&quot;</span><span class="s2">);</span>
+        <span class="s1">colorField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">JLabel descriptionLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Description:&quot;</span><span class="s2">);</span>
+        <span class="s1">descriptionArea </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextArea</span><span class="s2">();</span>
+        <span class="s1">JLabel statusLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Status:&quot;</span><span class="s2">);</span>
+        <span class="s1">statusField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">JLabel photosLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Photos:&quot;</span><span class="s2">);</span>
+        <span class="s1">photosField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">JLabel stocksLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Stocks:&quot;</span><span class="s2">);</span>
+        <span class="s1">stocksField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+
+        <span class="s1">JButton saveButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Save&quot;</span><span class="s2">);</span>
+        <span class="s1">saveButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s1">e -&gt; saveCar</span><span class="s2">());</span>
+
+        <span class="s1">JButton uploadButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Upload Photo&quot;</span><span class="s2">);</span>
+        <span class="s1">uploadButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s1">e -&gt; uploadPhoto</span><span class="s2">());</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">modelLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">modelField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">priceLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">priceField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">mileageLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">mileageField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">colorLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">colorField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">descriptionLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">descriptionArea</span><span class="s2">));</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">statusLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">statusField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">photosLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">photosField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">stocksLabel</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">stocksField</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">uploadButton</span><span class="s2">);</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">saveButton</span><span class="s2">);</span>
+
+        <span class="s1">loadCarData</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loadCarData</span><span class="s2">() {</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">()) {</span>
+            <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;SELECT * FROM cars WHERE carId = ?&quot;</span><span class="s2">;</span>
+            <span class="s0">try </span><span class="s2">(</span><span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">carId</span><span class="s2">);</span>
+                <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">();</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                    <span class="s1">modelField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;model&quot;</span><span class="s2">));</span>
+                    <span class="s1">priceField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">String</span><span class="s2">.</span><span class="s1">valueOf</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s4">&quot;price&quot;</span><span class="s2">)));</span>
+                    <span class="s1">mileageField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">String</span><span class="s2">.</span><span class="s1">valueOf</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;mileage&quot;</span><span class="s2">)));</span>
+                    <span class="s1">colorField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;color&quot;</span><span class="s2">));</span>
+                    <span class="s1">descriptionArea</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;description&quot;</span><span class="s2">));</span>
+                    <span class="s1">statusField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;status&quot;</span><span class="s2">));</span>
+                    <span class="s1">photosField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;photos&quot;</span><span class="s2">));</span>
+                    <span class="s1">stocksField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">String</span><span class="s2">.</span><span class="s1">valueOf</span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;stocks&quot;</span><span class="s2">)));</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error loading car data.&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">saveCar</span><span class="s2">() {</span>
+        <span class="s1">String model </span><span class="s2">= </span><span class="s1">modelField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String price </span><span class="s2">= </span><span class="s1">priceField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String mileageStr </span><span class="s2">= </span><span class="s1">mileageField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String color </span><span class="s2">= </span><span class="s1">colorField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String description </span><span class="s2">= </span><span class="s1">descriptionArea</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String status </span><span class="s2">= </span><span class="s1">statusField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String photos </span><span class="s2">= </span><span class="s1">photosField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String stocksStr </span><span class="s2">= </span><span class="s1">stocksField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">model</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">price</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">mileageStr</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">stocksStr</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Model, Price, Mileage, and Stocks must be filled out.&quot;</span><span class="s2">);</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s0">int </span><span class="s1">mileage</span><span class="s2">, </span><span class="s1">stocks</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">mileage </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">mileageStr</span><span class="s2">);</span>
+            <span class="s1">stocks </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">stocksStr</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Mileage and Stocks must be valid integers.&quot;</span><span class="s2">);</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">()) {</span>
+            <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;UPDATE cars SET model = ?, price = ?, mileage = ?, color = ?, description = ?, status = ?, stocks = ?, photos = ? WHERE carId = ?&quot;</span><span class="s2">;</span>
+            <span class="s0">try </span><span class="s2">(</span><span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">model</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">2</span><span class="s2">, </span><span class="s1">price</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s5">3</span><span class="s2">, </span><span class="s1">mileage</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">4</span><span class="s2">, </span><span class="s1">color</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">5</span><span class="s2">, </span><span class="s1">description</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">6</span><span class="s2">, </span><span class="s1">status</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s5">7</span><span class="s2">, </span><span class="s1">stocks</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">8</span><span class="s2">, </span><span class="s1">photos</span><span class="s2">);</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s5">9</span><span class="s2">, </span><span class="s1">carId</span><span class="s2">);</span>
+
+                <span class="s0">int </span><span class="s1">rowsUpdated </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">rowsUpdated </span><span class="s2">&gt; </span><span class="s5">0</span><span class="s2">) {</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Car updated successfully!&quot;</span><span class="s2">);</span>
+                    <span class="s1">parentPanel</span><span class="s2">.</span><span class="s1">reloadTableData</span><span class="s2">();</span>
+                    <span class="s1">dispose</span><span class="s2">();</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error updating car.&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">uploadPhoto</span><span class="s2">() {</span>
+        <span class="s1">JFileChooser fileChooser </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFileChooser</span><span class="s2">();</span>
+        <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">showOpenDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JFileChooser</span><span class="s2">.</span><span class="s1">APPROVE_OPTION</span><span class="s2">) {</span>
+            <span class="s1">File selectedFile </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">getSelectedFile</span><span class="s2">();</span>
+            <span class="s1">photosField</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s1">selectedFile</span><span class="s2">.</span><span class="s1">getAbsolutePath</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

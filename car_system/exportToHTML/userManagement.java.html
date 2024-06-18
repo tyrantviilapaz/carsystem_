@@ -1,0 +1,303 @@
+<html>
+<head>
+<title>userManagement.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+userManagement.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">border</span><span class="s2">.</span><span class="s1">EmptyBorder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">table</span><span class="s2">.</span><span class="s1">DefaultTableModel</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">table</span><span class="s2">.</span><span class="s1">TableCellRenderer</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">Connection</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">PreparedStatement</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">ResultSet</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">SQLException</span><span class="s2">;</span>
+
+<span class="s0">class </span><span class="s1">UserManagementView </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JTable userTable</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">DefaultTableModel tableModel</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">UserManagementView</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">isAdmin</span><span class="s2">) {</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s1">JPanel headerPanel </span><span class="s2">= </span><span class="s1">createHeaderPanel</span><span class="s2">();</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">headerPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s1">JPanel contentPanel </span><span class="s2">= </span><span class="s1">createContentPanel</span><span class="s2">();</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">contentPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s1">loadUsers</span><span class="s2">(</span><span class="s1">isAdmin</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createHeaderPanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel headerPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">);</span>
+        <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s3">1080</span><span class="s2">, </span><span class="s3">100</span><span class="s2">));</span>
+
+        <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;User Management&quot;</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s3">50</span><span class="s2">));</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s3">20</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">));</span>
+
+        <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">headerPanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createContentPanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel contentPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">contentPanel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s3">20</span><span class="s2">, </span><span class="s3">20</span><span class="s2">, </span><span class="s3">20</span><span class="s2">, </span><span class="s3">20</span><span class="s2">));</span>
+
+        <span class="s1">String</span><span class="s2">[] </span><span class="s1">columnNames </span><span class="s2">= {</span><span class="s4">&quot;User ID&quot;</span><span class="s2">, </span><span class="s4">&quot;Name&quot;</span><span class="s2">, </span><span class="s4">&quot;Address&quot;</span><span class="s2">, </span><span class="s4">&quot;Contact Number&quot;</span><span class="s2">, </span><span class="s4">&quot;Email&quot;</span><span class="s2">, </span><span class="s4">&quot;Password&quot;</span><span class="s2">, </span><span class="s4">&quot;Is Admin&quot;</span><span class="s2">, </span><span class="s4">&quot;Actions&quot;</span><span class="s2">};</span>
+        <span class="s1">tableModel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">DefaultTableModel</span><span class="s2">(</span><span class="s1">columnNames</span><span class="s2">, </span><span class="s3">0</span><span class="s2">);</span>
+        <span class="s1">userTable </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTable</span><span class="s2">(</span><span class="s1">tableModel</span><span class="s2">);</span>
+        <span class="s1">userTable</span><span class="s2">.</span><span class="s1">setRowHeight</span><span class="s2">(</span><span class="s3">30</span><span class="s2">);</span>
+        <span class="s1">userTable</span><span class="s2">.</span><span class="s1">getColumn</span><span class="s2">(</span><span class="s4">&quot;Actions&quot;</span><span class="s2">).</span><span class="s1">setCellRenderer</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ButtonRenderer</span><span class="s2">());</span>
+        <span class="s1">userTable</span><span class="s2">.</span><span class="s1">getColumn</span><span class="s2">(</span><span class="s4">&quot;Actions&quot;</span><span class="s2">).</span><span class="s1">setCellEditor</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ButtonEditor</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JCheckBox</span><span class="s2">(), </span><span class="s0">this</span><span class="s2">));</span>
+
+        <span class="s1">userTable</span><span class="s2">.</span><span class="s1">getColumnModel</span><span class="s2">().</span><span class="s1">getColumn</span><span class="s2">(</span><span class="s3">7</span><span class="s2">).</span><span class="s1">setPreferredWidth</span><span class="s2">(</span><span class="s3">200</span><span class="s2">); </span><span class="s5">// Set preferred width for Actions column</span>
+
+        <span class="s1">JScrollPane scrollPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">userTable</span><span class="s2">);</span>
+        <span class="s1">userTable</span><span class="s2">.</span><span class="s1">setFillsViewportHeight</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+
+        <span class="s1">contentPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">scrollPane</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">contentPanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loadUsers</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">isAdmin</span><span class="s2">) {</span>
+        <span class="s1">tableModel</span><span class="s2">.</span><span class="s1">setRowCount</span><span class="s2">(</span><span class="s3">0</span><span class="s2">); </span><span class="s5">// Clear existing data</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;SELECT userId, name, address, contactNum, email, password, isAdmin FROM users&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">);</span>
+             <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">()) {</span>
+
+            <span class="s0">while </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">isAdmin </span><span class="s2">&amp;&amp; </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getBoolean</span><span class="s2">(</span><span class="s4">&quot;isAdmin&quot;</span><span class="s2">)) {</span>
+                    <span class="s0">continue</span><span class="s2">; </span><span class="s5">// Skip admin users if not logged in as admin</span>
+                <span class="s2">}</span>
+                <span class="s1">Object</span><span class="s2">[] </span><span class="s1">rowData </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Object</span><span class="s2">[</span><span class="s3">8</span><span class="s2">];</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">0</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;userId&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">1</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;name&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">2</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;address&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">3</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;contactNum&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">4</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;email&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">5</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;password&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">6</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getBoolean</span><span class="s2">(</span><span class="s4">&quot;isAdmin&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">7</span><span class="s2">] = </span><span class="s4">&quot;Actions&quot;</span><span class="s2">;</span>
+
+                <span class="s1">tableModel</span><span class="s2">.</span><span class="s1">addRow</span><span class="s2">(</span><span class="s1">rowData</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error loading user data: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">deleteUser</span><span class="s2">(</span><span class="s0">int </span><span class="s1">userId</span><span class="s2">) {</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;DELETE FROM users WHERE userId = ?&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s1">userId</span><span class="s2">);</span>
+
+            <span class="s0">int </span><span class="s1">rowsDeleted </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">rowsDeleted </span><span class="s2">&gt; </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;User deleted successfully!&quot;</span><span class="s2">);</span>
+                <span class="s1">loadUsers</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error deleting user: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">updateUser</span><span class="s2">(</span><span class="s0">int </span><span class="s1">userId</span><span class="s2">, </span><span class="s1">String name</span><span class="s2">, </span><span class="s1">String address</span><span class="s2">, </span><span class="s1">String contactNum</span><span class="s2">, </span><span class="s1">String email</span><span class="s2">, </span><span class="s1">String password</span><span class="s2">, </span><span class="s0">boolean </span><span class="s1">isAdmin</span><span class="s2">) {</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;UPDATE users SET name = ?, address = ?, contactNum = ?, email = ?, password = ?, isAdmin = ? WHERE userId = ?&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s1">name</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">2</span><span class="s2">, </span><span class="s1">address</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">3</span><span class="s2">, </span><span class="s1">contactNum</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">4</span><span class="s2">, </span><span class="s1">email</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">5</span><span class="s2">, </span><span class="s1">password</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setBoolean</span><span class="s2">(</span><span class="s3">6</span><span class="s2">, </span><span class="s1">isAdmin</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s3">7</span><span class="s2">, </span><span class="s1">userId</span><span class="s2">);</span>
+
+            <span class="s0">int </span><span class="s1">rowsUpdated </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">rowsUpdated </span><span class="s2">&gt; </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;User updated successfully!&quot;</span><span class="s2">);</span>
+                <span class="s1">loadUsers</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error updating user: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">showUpdateDialog</span><span class="s2">(</span><span class="s0">int </span><span class="s1">userId</span><span class="s2">, </span><span class="s1">String name</span><span class="s2">, </span><span class="s1">String address</span><span class="s2">, </span><span class="s1">String contactNum</span><span class="s2">, </span><span class="s1">String email</span><span class="s2">, </span><span class="s1">String password</span><span class="s2">, </span><span class="s0">boolean </span><span class="s1">isAdmin</span><span class="s2">) {</span>
+        <span class="s1">JTextField nameField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s1">name</span><span class="s2">);</span>
+        <span class="s1">JTextField addressField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s1">address</span><span class="s2">);</span>
+        <span class="s1">JTextField contactNumField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s1">contactNum</span><span class="s2">);</span>
+        <span class="s1">JTextField emailField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s1">email</span><span class="s2">);</span>
+        <span class="s1">JTextField passwordField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s1">password</span><span class="s2">);</span>
+        <span class="s1">JCheckBox isAdminCheckbox </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JCheckBox</span><span class="s2">(</span><span class="s4">&quot;Is Admin&quot;</span><span class="s2">, </span><span class="s1">isAdmin</span><span class="s2">);</span>
+
+        <span class="s1">JPanel panel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s3">0</span><span class="s2">, </span><span class="s3">1</span><span class="s2">));</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Name:&quot;</span><span class="s2">));</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">nameField</span><span class="s2">);</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Address:&quot;</span><span class="s2">));</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">addressField</span><span class="s2">);</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Contact Number:&quot;</span><span class="s2">));</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">contactNumField</span><span class="s2">);</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Email:&quot;</span><span class="s2">));</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">emailField</span><span class="s2">);</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Password:&quot;</span><span class="s2">));</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">passwordField</span><span class="s2">);</span>
+        <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">isAdminCheckbox</span><span class="s2">);</span>
+
+        <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showConfirmDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">panel</span><span class="s2">, </span><span class="s4">&quot;Update User&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">OK_CANCEL_OPTION</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">PLAIN_MESSAGE</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">OK_OPTION</span><span class="s2">) {</span>
+            <span class="s1">updateUser</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">, </span><span class="s1">nameField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">(), </span><span class="s1">addressField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">(), </span><span class="s1">contactNumField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">(), </span><span class="s1">emailField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">(), </span><span class="s1">passwordField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">(), </span><span class="s1">isAdminCheckbox</span><span class="s2">.</span><span class="s1">isSelected</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">class </span><span class="s1">ButtonRenderer </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s0">implements </span><span class="s1">TableCellRenderer </span><span class="s2">{</span>
+        <span class="s0">private final </span><span class="s1">JButton deleteButton</span><span class="s2">;</span>
+        <span class="s0">private final </span><span class="s1">JButton updateButton</span><span class="s2">;</span>
+
+        <span class="s0">public </span><span class="s1">ButtonRenderer</span><span class="s2">() {</span>
+            <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">(</span><span class="s1">FlowLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">, </span><span class="s3">5</span><span class="s2">, </span><span class="s3">5</span><span class="s2">));</span>
+            <span class="s1">setOpaque</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+
+            <span class="s1">deleteButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Delete&quot;</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+
+            <span class="s1">updateButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Update&quot;</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLUE</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+
+            <span class="s1">add</span><span class="s2">(</span><span class="s1">deleteButton</span><span class="s2">);</span>
+            <span class="s1">add</span><span class="s2">(</span><span class="s1">updateButton</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Component getTableCellRendererComponent</span><span class="s2">(</span><span class="s1">JTable table</span><span class="s2">, </span><span class="s1">Object value</span><span class="s2">, </span><span class="s0">boolean </span><span class="s1">isSelected</span><span class="s2">, </span><span class="s0">boolean </span><span class="s1">hasFocus</span><span class="s2">, </span><span class="s0">int </span><span class="s1">row</span><span class="s2">, </span><span class="s0">int </span><span class="s1">column</span><span class="s2">) {</span>
+            <span class="s0">return this</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">class </span><span class="s1">ButtonEditor </span><span class="s0">extends </span><span class="s1">DefaultCellEditor </span><span class="s2">{</span>
+        <span class="s0">private final </span><span class="s1">JPanel panel</span><span class="s2">;</span>
+        <span class="s0">private final </span><span class="s1">JButton deleteButton</span><span class="s2">;</span>
+        <span class="s0">private final </span><span class="s1">JButton updateButton</span><span class="s2">;</span>
+        <span class="s0">private </span><span class="s1">UserManagementView parentPanel</span><span class="s2">;</span>
+        <span class="s0">private boolean </span><span class="s1">isPushed</span><span class="s2">;</span>
+        <span class="s0">private int </span><span class="s1">currentRow</span><span class="s2">;</span>
+
+        <span class="s0">public </span><span class="s1">ButtonEditor</span><span class="s2">(</span><span class="s1">JCheckBox checkBox</span><span class="s2">, </span><span class="s1">UserManagementView parentPanel</span><span class="s2">) {</span>
+            <span class="s0">super</span><span class="s2">(</span><span class="s1">checkBox</span><span class="s2">);</span>
+            <span class="s0">this</span><span class="s2">.</span><span class="s1">parentPanel </span><span class="s2">= </span><span class="s1">parentPanel</span><span class="s2">;</span>
+            <span class="s1">panel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">(</span><span class="s1">FlowLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">, </span><span class="s3">5</span><span class="s2">, </span><span class="s3">5</span><span class="s2">));</span>
+
+            <span class="s1">deleteButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Delete&quot;</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+            <span class="s1">deleteButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+                <span class="s1">@Override</span>
+                <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">currentRow </span><span class="s2">&gt;= </span><span class="s3">0 </span><span class="s2">&amp;&amp; </span><span class="s1">currentRow </span><span class="s2">&lt; </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getRowCount</span><span class="s2">()) {</span>
+                        <span class="s0">int </span><span class="s1">userId </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">0</span><span class="s2">);</span>
+                        <span class="s1">parentPanel</span><span class="s2">.</span><span class="s1">deleteUser</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                    <span class="s1">fireEditingStopped</span><span class="s2">();</span>
+                <span class="s2">}</span>
+            <span class="s2">});</span>
+
+            <span class="s1">updateButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Update&quot;</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLUE</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+            <span class="s1">updateButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+                <span class="s1">@Override</span>
+                <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">currentRow </span><span class="s2">&gt;= </span><span class="s3">0 </span><span class="s2">&amp;&amp; </span><span class="s1">currentRow </span><span class="s2">&lt; </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getRowCount</span><span class="s2">()) {</span>
+                        <span class="s0">int </span><span class="s1">userId </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">0</span><span class="s2">);</span>
+                        <span class="s1">String name </span><span class="s2">= (</span><span class="s1">String</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">1</span><span class="s2">);</span>
+                        <span class="s1">String address </span><span class="s2">= (</span><span class="s1">String</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">2</span><span class="s2">);</span>
+                        <span class="s1">String contactNum </span><span class="s2">= (</span><span class="s1">String</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">3</span><span class="s2">);</span>
+                        <span class="s1">String email </span><span class="s2">= (</span><span class="s1">String</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">4</span><span class="s2">);</span>
+                        <span class="s1">String password </span><span class="s2">= (</span><span class="s1">String</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">5</span><span class="s2">);</span>
+                        <span class="s0">boolean </span><span class="s1">isAdmin </span><span class="s2">= (</span><span class="s0">boolean</span><span class="s2">) </span><span class="s1">userTable</span><span class="s2">.</span><span class="s1">getValueAt</span><span class="s2">(</span><span class="s1">currentRow</span><span class="s2">, </span><span class="s3">6</span><span class="s2">);</span>
+                        <span class="s1">parentPanel</span><span class="s2">.</span><span class="s1">showUpdateDialog</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">address</span><span class="s2">, </span><span class="s1">contactNum</span><span class="s2">, </span><span class="s1">email</span><span class="s2">, </span><span class="s1">password</span><span class="s2">, </span><span class="s1">isAdmin</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                    <span class="s1">fireEditingStopped</span><span class="s2">();</span>
+                <span class="s2">}</span>
+            <span class="s2">});</span>
+
+            <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">deleteButton</span><span class="s2">);</span>
+            <span class="s1">panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">updateButton</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Component getTableCellEditorComponent</span><span class="s2">(</span><span class="s1">JTable table</span><span class="s2">, </span><span class="s1">Object value</span><span class="s2">, </span><span class="s0">boolean </span><span class="s1">isSelected</span><span class="s2">, </span><span class="s0">int </span><span class="s1">row</span><span class="s2">, </span><span class="s0">int </span><span class="s1">column</span><span class="s2">) {</span>
+            <span class="s1">isPushed </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">currentRow </span><span class="s2">= </span><span class="s1">row</span><span class="s2">;</span>
+            <span class="s0">return </span><span class="s1">panel</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Object getCellEditorValue</span><span class="s2">() {</span>
+            <span class="s1">isPushed </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s0">return </span><span class="s4">&quot;Actions&quot;</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public boolean </span><span class="s1">stopCellEditing</span><span class="s2">() {</span>
+            <span class="s1">isPushed </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s0">return super</span><span class="s2">.</span><span class="s1">stopCellEditing</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">protected void </span><span class="s1">fireEditingStopped</span><span class="s2">() {</span>
+            <span class="s0">super</span><span class="s2">.</span><span class="s1">fireEditingStopped</span><span class="s2">();</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">main</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">args</span><span class="s2">) {</span>
+        <span class="s1">JFrame frame </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFrame</span><span class="s2">(</span><span class="s4">&quot;User Management&quot;</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setDefaultCloseOperation</span><span class="s2">(</span><span class="s1">JFrame</span><span class="s2">.</span><span class="s1">EXIT_ON_CLOSE</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setSize</span><span class="s2">(</span><span class="s3">1080</span><span class="s2">, </span><span class="s3">720</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setLocationRelativeTo</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+
+        <span class="s1">UserManagementView userManagementView </span><span class="s2">= </span><span class="s0">new </span><span class="s1">UserManagementView</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">userManagementView</span><span class="s2">);</span>
+
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setVisible</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

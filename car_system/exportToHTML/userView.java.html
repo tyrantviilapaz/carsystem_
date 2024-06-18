@@ -1,0 +1,618 @@
+<html>
+<head>
+<title>userView.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+userView.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">border</span><span class="s2">.</span><span class="s1">EmptyBorder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">Connection</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">PreparedStatement</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">ResultSet</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">SQLException</span><span class="s2">;</span>
+
+<span class="s0">class </span><span class="s1">UserView </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JLabel userNameLabel</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">String userName</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JFrame parentFrame</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">UserView</span><span class="s2">(</span><span class="s1">String userName</span><span class="s2">, </span><span class="s1">JFrame parentFrame</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">userName </span><span class="s2">= </span><span class="s1">userName</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">parentFrame </span><span class="s2">= </span><span class="s1">parentFrame</span><span class="s2">;</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s3">// Navigation Bar</span>
+        <span class="s1">JPanel navBar </span><span class="s2">= </span><span class="s1">createNavBar</span><span class="s2">();</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">navBar</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s3">// Main content</span>
+        <span class="s1">JPanel mainContent </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BoxLayout</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BoxLayout</span><span class="s2">.</span><span class="s1">Y_AXIS</span><span class="s2">));</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s3">// Title</span>
+        <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Cars for Sale&quot;</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">24</span><span class="s2">));</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">);</span>
+
+        <span class="s3">// Car Listings</span>
+        <span class="s1">JPanel carListings </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">4</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">)); </span><span class="s3">// GridLayout with 4 columns</span>
+        <span class="s1">JScrollPane scrollPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+        <span class="s1">scrollPane</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+        <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">scrollPane</span><span class="s2">);</span>
+
+        <span class="s1">loadCarData</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createNavBar</span><span class="s2">() {</span>
+        <span class="s1">JPanel navBar </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">navBar</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">);</span>
+        <span class="s1">navBar</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+
+        <span class="s1">userNameLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Logged in as: &quot; </span><span class="s2">+ </span><span class="s1">userName</span><span class="s2">);</span>
+        <span class="s1">userNameLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">18</span><span class="s2">));</span>
+        <span class="s1">userNameLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">navBar</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">userNameLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">WEST</span><span class="s2">);</span>
+
+        <span class="s1">JPanel buttonPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">(</span><span class="s1">FlowLayout</span><span class="s2">.</span><span class="s1">RIGHT</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">0</span><span class="s2">));</span>
+        <span class="s1">buttonPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">); </span><span class="s3">// Make sure the panel background matches the nav bar</span>
+
+        <span class="s1">JButton userDetailsButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;User Details&quot;</span><span class="s2">);</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+        <span class="s1">Dimension buttonSize </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">120</span><span class="s2">, </span><span class="s5">30</span><span class="s2">); </span><span class="s3">// Adjust the size as needed</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">buttonSize</span><span class="s2">);</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">setMinimumSize</span><span class="s2">(</span><span class="s1">buttonSize</span><span class="s2">);</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">setMaximumSize</span><span class="s2">(</span><span class="s1">buttonSize</span><span class="s2">);</span>
+        <span class="s1">userDetailsButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">showUserDetails</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">buttonPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">userDetailsButton</span><span class="s2">);</span>
+
+        <span class="s1">JButton logoutButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Logout&quot;</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">80</span><span class="s2">, </span><span class="s5">30</span><span class="s2">)); </span><span class="s3">// Adjust size as needed</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setMinimumSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">80</span><span class="s2">, </span><span class="s5">30</span><span class="s2">));</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setMaximumSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">80</span><span class="s2">, </span><span class="s5">30</span><span class="s2">));</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">logout</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">buttonPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">logoutButton</span><span class="s2">);</span>
+
+        <span class="s1">navBar</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">buttonPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">EAST</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">navBar</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loadCarData</span><span class="s2">(</span><span class="s1">JPanel carListings</span><span class="s2">) {</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">()) {</span>
+            <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;SELECT carId, model, price, mileage, color, description, photos, stocks FROM cars WHERE stocks &gt; 0&quot;</span><span class="s2">;</span>
+            <span class="s0">try </span><span class="s2">(</span><span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">);</span>
+                 <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">()) {</span>
+
+                <span class="s0">while </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                    <span class="s0">int </span><span class="s1">carId </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;carId&quot;</span><span class="s2">);</span>
+                    <span class="s1">String model </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;model&quot;</span><span class="s2">);</span>
+                    <span class="s0">double </span><span class="s1">price </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s4">&quot;price&quot;</span><span class="s2">);</span>
+                    <span class="s0">int </span><span class="s1">mileage </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;mileage&quot;</span><span class="s2">);</span>
+                    <span class="s1">String color </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;color&quot;</span><span class="s2">);</span>
+                    <span class="s1">String description </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;description&quot;</span><span class="s2">);</span>
+                    <span class="s1">String photos </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;photos&quot;</span><span class="s2">);</span>
+                    <span class="s0">int </span><span class="s1">stocks </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;stocks&quot;</span><span class="s2">);</span>
+
+                    <span class="s1">JPanel carCard </span><span class="s2">= </span><span class="s1">createCarCard</span><span class="s2">(</span><span class="s1">carId</span><span class="s2">, </span><span class="s1">model</span><span class="s2">, </span><span class="s1">price</span><span class="s2">, </span><span class="s1">mileage</span><span class="s2">, </span><span class="s1">color</span><span class="s2">, </span><span class="s1">description</span><span class="s2">, </span><span class="s1">photos</span><span class="s2">, </span><span class="s1">stocks</span><span class="s2">);</span>
+                    <span class="s1">carListings</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">carCard</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error loading car data: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createCarCard</span><span class="s2">(</span><span class="s0">int </span><span class="s1">carId</span><span class="s2">, </span><span class="s1">String model</span><span class="s2">, </span><span class="s0">double </span><span class="s1">price</span><span class="s2">, </span><span class="s0">int </span><span class="s1">mileage</span><span class="s2">, </span><span class="s1">String color</span><span class="s2">, </span><span class="s1">String description</span><span class="s2">, </span><span class="s1">String photos</span><span class="s2">, </span><span class="s0">int </span><span class="s1">stocks</span><span class="s2">) {</span>
+        <span class="s1">JPanel carCard </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s1">BorderFactory</span><span class="s2">.</span><span class="s1">createLineBorder</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">LIGHT_GRAY</span><span class="s2">));</span>
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">250</span><span class="s2">));</span>
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+
+        <span class="s3">// Car image</span>
+        <span class="s1">JLabel imageLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">();</span>
+        <span class="s1">imageLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">photos </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; !</span><span class="s1">photos</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">ImageIcon icon </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">photos</span><span class="s2">);</span>
+            <span class="s1">Image image </span><span class="s2">= </span><span class="s1">icon</span><span class="s2">.</span><span class="s1">getImage</span><span class="s2">().</span><span class="s1">getScaledInstance</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">150</span><span class="s2">, </span><span class="s1">Image</span><span class="s2">.</span><span class="s1">SCALE_SMOOTH</span><span class="s2">);</span>
+            <span class="s1">imageLabel</span><span class="s2">.</span><span class="s1">setIcon</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">image</span><span class="s2">));</span>
+        <span class="s2">}</span>
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">imageLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s3">// Car details</span>
+        <span class="s1">JPanel detailsPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">detailsPanel</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BoxLayout</span><span class="s2">(</span><span class="s1">detailsPanel</span><span class="s2">, </span><span class="s1">BoxLayout</span><span class="s2">.</span><span class="s1">Y_AXIS</span><span class="s2">));</span>
+        <span class="s1">detailsPanel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+        <span class="s1">detailsPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+
+        <span class="s1">detailsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;&lt;html&gt;&lt;b&gt;Model:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">model </span><span class="s2">+ </span><span class="s4">&quot;&lt;/html&gt;&quot;</span><span class="s2">));</span>
+        <span class="s1">detailsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;&lt;html&gt;&lt;b&gt;Price:&lt;/b&gt; $&quot; </span><span class="s2">+ </span><span class="s1">price </span><span class="s2">+ </span><span class="s4">&quot;&lt;/html&gt;&quot;</span><span class="s2">));</span>
+        <span class="s1">detailsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;&lt;html&gt;&lt;b&gt;Stocks:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">stocks </span><span class="s2">+ </span><span class="s4">&quot;&lt;/html&gt;&quot;</span><span class="s2">));</span>
+
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">detailsPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s3">// Buttons panel</span>
+        <span class="s1">JPanel buttonsPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">(</span><span class="s1">FlowLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">, </span><span class="s5">5</span><span class="s2">, </span><span class="s5">5</span><span class="s2">));</span>
+        <span class="s1">buttonsPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+
+        <span class="s1">JButton buyButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Buy&quot;</span><span class="s2">);</span>
+        <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GREEN</span><span class="s2">);</span>
+        <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">showPurchaseForm</span><span class="s2">(</span><span class="s1">carId</span><span class="s2">, </span><span class="s1">model</span><span class="s2">, </span><span class="s1">price</span><span class="s2">, </span><span class="s1">mileage</span><span class="s2">, </span><span class="s1">color</span><span class="s2">, </span><span class="s1">description</span><span class="s2">, </span><span class="s1">photos</span><span class="s2">, </span><span class="s1">stocks</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">buttonsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">buyButton</span><span class="s2">);</span>
+
+        <span class="s1">JButton viewDetailsButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;View Details&quot;</span><span class="s2">);</span>
+        <span class="s1">viewDetailsButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLUE</span><span class="s2">);</span>
+        <span class="s1">viewDetailsButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">viewDetailsButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">viewDetailsButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">showCarDetails</span><span class="s2">(</span><span class="s1">carId</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">buttonsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">viewDetailsButton</span><span class="s2">);</span>
+
+        <span class="s1">carCard</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">buttonsPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">carCard</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">showCarDetails</span><span class="s2">(</span><span class="s0">int </span><span class="s1">carId</span><span class="s2">) {</span>
+        <span class="s1">removeAll</span><span class="s2">();</span>
+        <span class="s1">revalidate</span><span class="s2">();</span>
+        <span class="s1">repaint</span><span class="s2">();</span>
+
+        <span class="s0">final </span><span class="s1">JPanel carDetailsPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">carDetailsPanel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">));</span>
+
+        <span class="s0">final </span><span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;SELECT * FROM cars WHERE carId = ?&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">carId</span><span class="s2">);</span>
+            <span class="s0">try </span><span class="s2">(</span><span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">()) {</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                    <span class="s1">String model </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;model&quot;</span><span class="s2">);</span>
+                    <span class="s0">double </span><span class="s1">price </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s4">&quot;price&quot;</span><span class="s2">);</span>
+                    <span class="s0">int </span><span class="s1">mileage </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;mileage&quot;</span><span class="s2">);</span>
+                    <span class="s1">String color </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;color&quot;</span><span class="s2">);</span>
+                    <span class="s1">String description </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;description&quot;</span><span class="s2">);</span>
+                    <span class="s1">String status </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;status&quot;</span><span class="s2">);</span>
+                    <span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">Date dateListed </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDate</span><span class="s2">(</span><span class="s4">&quot;date_listed&quot;</span><span class="s2">);</span>
+                    <span class="s1">String photos </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;photos&quot;</span><span class="s2">);</span>
+                    <span class="s0">int </span><span class="s1">stocks </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;stocks&quot;</span><span class="s2">);</span>
+
+                    <span class="s1">JLabel carDetails </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;&lt;html&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Model:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">model </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Price:&lt;/b&gt; $&quot; </span><span class="s2">+ </span><span class="s1">price </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Mileage:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">mileage </span><span class="s2">+ </span><span class="s4">&quot; miles&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Color:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">color </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Description:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">description </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Status:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">status </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;b&gt;Date Listed:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">dateListed </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                            <span class="s4">&quot;&lt;/html&gt;&quot;</span><span class="s2">);</span>
+                    <span class="s1">carDetailsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">carDetails</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+                    <span class="s3">// Display photo</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">photos </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; !</span><span class="s1">photos</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+                        <span class="s1">ImageIcon icon </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">photos</span><span class="s2">);</span>
+                        <span class="s1">Image image </span><span class="s2">= </span><span class="s1">icon</span><span class="s2">.</span><span class="s1">getImage</span><span class="s2">().</span><span class="s1">getScaledInstance</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">150</span><span class="s2">, </span><span class="s1">Image</span><span class="s2">.</span><span class="s1">SCALE_SMOOTH</span><span class="s2">);</span>
+                        <span class="s1">JLabel photoLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">image</span><span class="s2">));</span>
+                        <span class="s1">carDetailsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">photoLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+
+                    <span class="s3">// Add buy button</span>
+                    <span class="s1">JButton buyButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Buy&quot;</span><span class="s2">);</span>
+                    <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GREEN</span><span class="s2">);</span>
+                    <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+                    <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                    <span class="s1">buyButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+                        <span class="s1">@Override</span>
+                        <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                            <span class="s1">showPurchaseForm</span><span class="s2">(</span><span class="s1">carId</span><span class="s2">, </span><span class="s1">model</span><span class="s2">, </span><span class="s1">price</span><span class="s2">, </span><span class="s1">mileage</span><span class="s2">, </span><span class="s1">color</span><span class="s2">, </span><span class="s1">description</span><span class="s2">, </span><span class="s1">photos</span><span class="s2">, </span><span class="s1">stocks</span><span class="s2">);</span>
+                        <span class="s2">}</span>
+                    <span class="s2">});</span>
+                    <span class="s1">carDetailsPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">buyButton</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error loading car details: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">carDetailsPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s3">// Add back button to return to the car listings</span>
+        <span class="s1">JButton backButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Back&quot;</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">removeAll</span><span class="s2">();</span>
+                <span class="s1">revalidate</span><span class="s2">();</span>
+                <span class="s1">repaint</span><span class="s2">();</span>
+                <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+                <span class="s3">// Navigation Bar</span>
+                <span class="s1">JPanel navBar </span><span class="s2">= </span><span class="s1">createNavBar</span><span class="s2">();</span>
+                <span class="s1">add</span><span class="s2">(</span><span class="s1">navBar</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+                <span class="s3">// Main content</span>
+                <span class="s1">JPanel mainContent </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BoxLayout</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BoxLayout</span><span class="s2">.</span><span class="s1">Y_AXIS</span><span class="s2">));</span>
+                <span class="s1">add</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+                <span class="s3">// Title</span>
+                <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Cars for Sale&quot;</span><span class="s2">);</span>
+                <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">24</span><span class="s2">));</span>
+                <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">);</span>
+
+                <span class="s3">// Car Listings</span>
+                <span class="s1">JPanel carListings </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">4</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+                <span class="s1">JScrollPane scrollPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+                <span class="s1">scrollPane</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">scrollPane</span><span class="s2">);</span>
+
+                <span class="s1">loadCarData</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">backButton</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">showPurchaseForm</span><span class="s2">(</span><span class="s0">int </span><span class="s1">carId</span><span class="s2">, </span><span class="s1">String model</span><span class="s2">, </span><span class="s0">double </span><span class="s1">price</span><span class="s2">, </span><span class="s0">int </span><span class="s1">mileage</span><span class="s2">, </span><span class="s1">String color</span><span class="s2">, </span><span class="s1">String description</span><span class="s2">, </span><span class="s1">String photos</span><span class="s2">, </span><span class="s0">int </span><span class="s1">stocks</span><span class="s2">) {</span>
+        <span class="s1">removeAll</span><span class="s2">();</span>
+        <span class="s1">revalidate</span><span class="s2">();</span>
+        <span class="s1">repaint</span><span class="s2">();</span>
+
+        <span class="s1">JPanel purchasePanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridBagLayout</span><span class="s2">());</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">));</span>
+
+        <span class="s1">GridBagConstraints gbc </span><span class="s2">= </span><span class="s0">new </span><span class="s1">GridBagConstraints</span><span class="s2">();</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">insets </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Insets</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">fill </span><span class="s2">= </span><span class="s1">GridBagConstraints</span><span class="s2">.</span><span class="s1">HORIZONTAL</span><span class="s2">;</span>
+
+        <span class="s3">// Car details at the top</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">photos </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; !</span><span class="s1">photos</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">ImageIcon icon </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">photos</span><span class="s2">);</span>
+            <span class="s1">Image image </span><span class="s2">= </span><span class="s1">icon</span><span class="s2">.</span><span class="s1">getImage</span><span class="s2">().</span><span class="s1">getScaledInstance</span><span class="s2">(</span><span class="s5">250</span><span class="s2">, </span><span class="s5">150</span><span class="s2">, </span><span class="s1">Image</span><span class="s2">.</span><span class="s1">SCALE_SMOOTH</span><span class="s2">);</span>
+            <span class="s1">JLabel photoLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">image</span><span class="s2">));</span>
+            <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+            <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+            <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s5">2</span><span class="s2">;</span>
+            <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">photoLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Model:&quot;</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s1">model</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">2</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Price:&quot;</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;$&quot; </span><span class="s2">+ </span><span class="s1">price</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Customer Full Name</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">3</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Customer Full Name:&quot;</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s1">JTextField customerNameField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s5">20</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">customerNameField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Customer Address</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">4</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Address:&quot;</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s1">JTextField addressField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s5">20</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">addressField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Customer Contact Number</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">5</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Contact Number:&quot;</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s1">JTextField contactNumberField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s5">20</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">contactNumberField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Customer Payment Amount</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">6</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Amount Paid:&quot;</span><span class="s2">), </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s1">JTextField amountPaidField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">(</span><span class="s5">20</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">amountPaidField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Buy Button</span>
+        <span class="s0">final </span><span class="s1">String finalModel </span><span class="s2">= </span><span class="s1">model</span><span class="s2">;</span>
+        <span class="s0">final double </span><span class="s1">finalPrice </span><span class="s2">= </span><span class="s1">price</span><span class="s2">;</span>
+        <span class="s0">final int </span><span class="s1">finalMileage </span><span class="s2">= </span><span class="s1">mileage</span><span class="s2">;</span>
+        <span class="s0">final </span><span class="s1">String finalColor </span><span class="s2">= </span><span class="s1">color</span><span class="s2">;</span>
+        <span class="s0">final </span><span class="s1">String finalDescription </span><span class="s2">= </span><span class="s1">description</span><span class="s2">;</span>
+        <span class="s0">final </span><span class="s1">String finalPhotos </span><span class="s2">= </span><span class="s1">photos</span><span class="s2">;</span>
+        <span class="s0">final int </span><span class="s1">finalStocks </span><span class="s2">= </span><span class="s1">stocks</span><span class="s2">;</span>
+
+        <span class="s1">JButton confirmPurchaseButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Confirm Purchase&quot;</span><span class="s2">);</span>
+        <span class="s1">confirmPurchaseButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GREEN</span><span class="s2">);</span>
+        <span class="s1">confirmPurchaseButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">confirmPurchaseButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">7</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s5">2</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">anchor </span><span class="s2">= </span><span class="s1">GridBagConstraints</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">;</span>
+        <span class="s1">confirmPurchaseButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">String customerName </span><span class="s2">= </span><span class="s1">customerNameField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+                <span class="s1">String address </span><span class="s2">= </span><span class="s1">addressField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+                <span class="s1">String contactNumber </span><span class="s2">= </span><span class="s1">contactNumberField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+                <span class="s0">double </span><span class="s1">amountPaid</span><span class="s2">;</span>
+
+                <span class="s0">try </span><span class="s2">{</span>
+                    <span class="s1">amountPaid </span><span class="s2">= </span><span class="s1">Double</span><span class="s2">.</span><span class="s1">parseDouble</span><span class="s2">(</span><span class="s1">amountPaidField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">());</span>
+                <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException ex</span><span class="s2">) {</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s1">UserView</span><span class="s2">.</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Please enter a valid amount.&quot;</span><span class="s2">, </span><span class="s4">&quot;Invalid Input&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+                    <span class="s0">return</span><span class="s2">;</span>
+                <span class="s2">}</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">amountPaid </span><span class="s2">&lt; </span><span class="s1">finalPrice</span><span class="s2">) {</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s1">UserView</span><span class="s2">.</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Insufficient amount. The car costs $&quot; </span><span class="s2">+ </span><span class="s1">finalPrice</span><span class="s2">, </span><span class="s4">&quot;Insufficient Amount&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s3">// Insert customer details into the database</span>
+                    <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">()) {</span>
+                        <span class="s1">String insertQuery </span><span class="s2">= </span><span class="s4">&quot;INSERT INTO customer (fullname, address, contactNum, payment) VALUES (?, ?, ?, ?)&quot;</span><span class="s2">;</span>
+                        <span class="s0">try </span><span class="s2">(</span><span class="s1">PreparedStatement insertStatement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">insertQuery</span><span class="s2">, </span><span class="s1">PreparedStatement</span><span class="s2">.</span><span class="s1">RETURN_GENERATED_KEYS</span><span class="s2">)) {</span>
+                            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">customerName</span><span class="s2">);</span>
+                            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">2</span><span class="s2">, </span><span class="s1">address</span><span class="s2">);</span>
+                            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">3</span><span class="s2">, </span><span class="s1">contactNumber</span><span class="s2">);</span>
+                            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setDouble</span><span class="s2">(</span><span class="s5">4</span><span class="s2">, </span><span class="s1">amountPaid</span><span class="s2">);</span>
+                            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+
+                            <span class="s1">ResultSet generatedKeys </span><span class="s2">= </span><span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">getGeneratedKeys</span><span class="s2">();</span>
+                            <span class="s0">if </span><span class="s2">(</span><span class="s1">generatedKeys</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                                <span class="s0">int </span><span class="s1">customerId </span><span class="s2">= </span><span class="s1">generatedKeys</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s5">1</span><span class="s2">);</span>
+
+                                <span class="s3">// Update car stocks</span>
+                                <span class="s1">String updateStocksQuery </span><span class="s2">= </span><span class="s4">&quot;UPDATE cars SET stocks = stocks - 1 WHERE carId = ?&quot;</span><span class="s2">;</span>
+                                <span class="s0">try </span><span class="s2">(</span><span class="s1">PreparedStatement updateStocksStatement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">updateStocksQuery</span><span class="s2">)) {</span>
+                                    <span class="s1">updateStocksStatement</span><span class="s2">.</span><span class="s1">setInt</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">carId</span><span class="s2">);</span>
+                                    <span class="s1">updateStocksStatement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+                                <span class="s2">}</span>
+
+                                <span class="s0">double </span><span class="s1">change </span><span class="s2">= </span><span class="s1">amountPaid </span><span class="s2">- </span><span class="s1">finalPrice</span><span class="s2">;</span>
+                                <span class="s1">showReceipt</span><span class="s2">(</span><span class="s1">customerId</span><span class="s2">, </span><span class="s1">customerName</span><span class="s2">, </span><span class="s1">address</span><span class="s2">, </span><span class="s1">contactNumber</span><span class="s2">, </span><span class="s1">carId</span><span class="s2">, </span><span class="s1">finalModel</span><span class="s2">, </span><span class="s1">finalPrice</span><span class="s2">, </span><span class="s1">amountPaid</span><span class="s2">, </span><span class="s1">change</span><span class="s2">);</span>
+
+                                <span class="s3">// Insert sale details into the sales table</span>
+                                <span class="s1">insertSale</span><span class="s2">(</span><span class="s1">customerName</span><span class="s2">, </span><span class="s1">finalModel</span><span class="s2">, </span><span class="s1">finalPrice</span><span class="s2">);</span>
+                            <span class="s2">}</span>
+                        <span class="s2">}</span>
+                    <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+                        <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+                        <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s1">UserView</span><span class="s2">.</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error processing transaction: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">(), </span><span class="s4">&quot;Database Error&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">confirmPurchaseButton</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s3">// Add back button to return to the car listings</span>
+        <span class="s1">JButton backButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Back&quot;</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s5">8</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s5">2</span><span class="s2">;</span>
+        <span class="s1">purchasePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">backButton</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">removeAll</span><span class="s2">();</span>
+                <span class="s1">revalidate</span><span class="s2">();</span>
+                <span class="s1">repaint</span><span class="s2">();</span>
+                <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+                <span class="s3">// Navigation Bar</span>
+                <span class="s1">JPanel navBar </span><span class="s2">= </span><span class="s1">createNavBar</span><span class="s2">();</span>
+                <span class="s1">add</span><span class="s2">(</span><span class="s1">navBar</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+                <span class="s3">// Main content</span>
+                <span class="s1">JPanel mainContent </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BoxLayout</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BoxLayout</span><span class="s2">.</span><span class="s1">Y_AXIS</span><span class="s2">));</span>
+                <span class="s1">add</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+                <span class="s3">// Title</span>
+                <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Cars for Sale&quot;</span><span class="s2">);</span>
+                <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">24</span><span class="s2">));</span>
+                <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">);</span>
+
+                <span class="s3">// Car Listings</span>
+                <span class="s1">JPanel carListings </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">4</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">)); </span><span class="s3">// GridLayout with 4 columns</span>
+                <span class="s1">JScrollPane scrollPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+                <span class="s1">scrollPane</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">scrollPane</span><span class="s2">);</span>
+
+                <span class="s1">loadCarData</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">purchasePanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">insertSale</span><span class="s2">(</span><span class="s1">String customerName</span><span class="s2">, </span><span class="s1">String carModel</span><span class="s2">, </span><span class="s0">double </span><span class="s1">salePrice</span><span class="s2">) {</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;INSERT INTO sales (customerName, carModel, salePrice, saleDate) VALUES (?, ?, ?, NOW())&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">customerName</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">2</span><span class="s2">, </span><span class="s1">carModel</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">setDouble</span><span class="s2">(</span><span class="s5">3</span><span class="s2">, </span><span class="s1">salePrice</span><span class="s2">);</span>
+            <span class="s1">statement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error inserting sale: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">(), </span><span class="s4">&quot;Database Error&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">showReceipt</span><span class="s2">(</span><span class="s0">int </span><span class="s1">customerId</span><span class="s2">, </span><span class="s1">String customerName</span><span class="s2">, </span><span class="s1">String address</span><span class="s2">, </span><span class="s1">String contactNumber</span><span class="s2">, </span><span class="s0">int </span><span class="s1">carId</span><span class="s2">, </span><span class="s1">String model</span><span class="s2">, </span><span class="s0">double </span><span class="s1">price</span><span class="s2">, </span><span class="s0">double </span><span class="s1">amountPaid</span><span class="s2">, </span><span class="s0">double </span><span class="s1">change</span><span class="s2">) {</span>
+        <span class="s1">removeAll</span><span class="s2">();</span>
+        <span class="s1">revalidate</span><span class="s2">();</span>
+        <span class="s1">repaint</span><span class="s2">();</span>
+
+        <span class="s1">JPanel receiptPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">receiptPanel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">, </span><span class="s5">20</span><span class="s2">));</span>
+
+        <span class="s1">JLabel receiptLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;&lt;html&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;h1&gt;Receipt&lt;/h1&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Customer ID:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">customerId </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Customer Name:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">customerName </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Address:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">address </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Contact Number:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">contactNumber </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Car Model:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">model </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Price:&lt;/b&gt; $&quot; </span><span class="s2">+ </span><span class="s1">price </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Amount Paid:&lt;/b&gt; $&quot; </span><span class="s2">+ </span><span class="s1">amountPaid </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Change:&lt;/b&gt; $&quot; </span><span class="s2">+ </span><span class="s1">change </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;b&gt;Handled by:&lt;/b&gt; &quot; </span><span class="s2">+ </span><span class="s1">userName </span><span class="s2">+ </span><span class="s4">&quot;&lt;br&gt;&quot; </span><span class="s2">+</span>
+                <span class="s4">&quot;&lt;/html&gt;&quot;</span><span class="s2">);</span>
+        <span class="s1">receiptLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">PLAIN</span><span class="s2">, </span><span class="s5">18</span><span class="s2">));</span>
+        <span class="s1">receiptPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">receiptLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s1">JButton backButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Back to Listings&quot;</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">backButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">removeAll</span><span class="s2">();</span>
+                <span class="s1">revalidate</span><span class="s2">();</span>
+                <span class="s1">repaint</span><span class="s2">();</span>
+                <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+                <span class="s3">// Navigation Bar</span>
+                <span class="s1">JPanel navBar </span><span class="s2">= </span><span class="s1">createNavBar</span><span class="s2">();</span>
+                <span class="s1">add</span><span class="s2">(</span><span class="s1">navBar</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+                <span class="s3">// Main content</span>
+                <span class="s1">JPanel mainContent </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BoxLayout</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BoxLayout</span><span class="s2">.</span><span class="s1">Y_AXIS</span><span class="s2">));</span>
+                <span class="s1">add</span><span class="s2">(</span><span class="s1">mainContent</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+                <span class="s3">// Title</span>
+                <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Cars for Sale&quot;</span><span class="s2">);</span>
+                <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">24</span><span class="s2">));</span>
+                <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">);</span>
+
+                <span class="s3">// Car Listings</span>
+                <span class="s1">JPanel carListings </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridLayout</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">4</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">)); </span><span class="s3">// GridLayout with 4 columns</span>
+                <span class="s1">JScrollPane scrollPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+                <span class="s1">scrollPane</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">, </span><span class="s5">10</span><span class="s2">));</span>
+                <span class="s1">mainContent</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">scrollPane</span><span class="s2">);</span>
+
+                <span class="s1">loadCarData</span><span class="s2">(</span><span class="s1">carListings</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+
+        <span class="s1">receiptPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">backButton</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">receiptPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">showUserDetails</span><span class="s2">() {</span>
+        <span class="s3">// Fetch user details from the database</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">()) {</span>
+            <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;SELECT name, address, contactNum, email, dateOfPurchase FROM users WHERE name = ?&quot;</span><span class="s2">;</span>
+            <span class="s0">try </span><span class="s2">(</span><span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">)) {</span>
+                <span class="s1">statement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">userName</span><span class="s2">);</span>
+                <span class="s0">try </span><span class="s2">(</span><span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">()) {</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                        <span class="s1">String name </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;name&quot;</span><span class="s2">);</span>
+                        <span class="s1">String address </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;address&quot;</span><span class="s2">);</span>
+                        <span class="s1">String contactNum </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;contactNum&quot;</span><span class="s2">);</span>
+                        <span class="s1">String email </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;email&quot;</span><span class="s2">);</span>
+                        <span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">Date dateOfPurchase </span><span class="s2">= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDate</span><span class="s2">(</span><span class="s4">&quot;dateOfPurchase&quot;</span><span class="s2">);</span>
+
+                        <span class="s3">// Display the user details</span>
+                        <span class="s1">String userDetails </span><span class="s2">= </span><span class="s1">String</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span>
+                                <span class="s4">&quot;&lt;html&gt;&quot; </span><span class="s2">+</span>
+                                        <span class="s4">&quot;&lt;b&gt;Name:&lt;/b&gt; %s&lt;br&gt;&quot; </span><span class="s2">+</span>
+                                        <span class="s4">&quot;&lt;b&gt;Address:&lt;/b&gt; %s&lt;br&gt;&quot; </span><span class="s2">+</span>
+                                        <span class="s4">&quot;&lt;b&gt;Contact Number:&lt;/b&gt; %s&lt;br&gt;&quot; </span><span class="s2">+</span>
+                                        <span class="s4">&quot;&lt;b&gt;Email:&lt;/b&gt; %s&lt;br&gt;&quot; </span><span class="s2">+</span>
+                                        <span class="s4">&quot;&lt;b&gt;Date of Purchase:&lt;/b&gt; %s&lt;br&gt;&quot; </span><span class="s2">+</span>
+                                        <span class="s4">&quot;&lt;/html&gt;&quot;</span><span class="s2">,</span>
+                                <span class="s1">name</span><span class="s2">, </span><span class="s1">address</span><span class="s2">, </span><span class="s1">contactNum</span><span class="s2">, </span><span class="s1">email</span><span class="s2">, </span><span class="s1">dateOfPurchase</span>
+                        <span class="s2">);</span>
+
+                        <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">userDetails</span><span class="s2">, </span><span class="s4">&quot;User Details&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">INFORMATION_MESSAGE</span><span class="s2">);</span>
+                    <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                        <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;User details not found.&quot;</span><span class="s2">, </span><span class="s4">&quot;Error&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error fetching user details: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">(), </span><span class="s4">&quot;Database Error&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">ERROR_MESSAGE</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">logout</span><span class="s2">() {</span>
+        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Login</span><span class="s2">());</span>
+        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">revalidate</span><span class="s2">();</span>
+        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">repaint</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

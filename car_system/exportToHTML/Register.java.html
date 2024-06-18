@@ -1,0 +1,281 @@
+<html>
+<head>
+<title>Register.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Register.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">border</span><span class="s2">.</span><span class="s1">EmptyBorder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.*;</span>
+
+<span class="s0">public class </span><span class="s1">Register </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JTextField nameField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField addressField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField contactNumField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JTextField emailField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JPasswordField passwordField</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JPasswordField confirmPasswordField</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">Register</span><span class="s2">() {</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s1">JPanel mainPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">mainPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">createRegisterPanel</span><span class="s2">(), </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">WEST</span><span class="s2">);</span>
+        <span class="s1">mainPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">createImagePanel</span><span class="s2">(), </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">mainPanel</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createRegisterPanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel registerPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">GridBagLayout</span><span class="s2">());</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s3">540</span><span class="s2">, </span><span class="s3">720</span><span class="s2">));</span>
+
+        <span class="s1">GridBagConstraints gbc </span><span class="s2">= </span><span class="s0">new </span><span class="s1">GridBagConstraints</span><span class="s2">();</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">insets </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Insets</span><span class="s2">(</span><span class="s3">10</span><span class="s2">, </span><span class="s3">10</span><span class="s2">, </span><span class="s3">10</span><span class="s2">, </span><span class="s3">10</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">fill </span><span class="s2">= </span><span class="s1">GridBagConstraints</span><span class="s2">.</span><span class="s1">HORIZONTAL</span><span class="s2">;</span>
+
+        <span class="s1">Dimension textFieldSize </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s3">250</span><span class="s2">, </span><span class="s3">30</span><span class="s2">);</span>
+
+        <span class="s4">// Title</span>
+        <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;REGISTER&quot;</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s5">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s3">24</span><span class="s2">));</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s3">2</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Subtitle</span>
+        <span class="s1">JLabel subtitleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Create a new account.&quot;</span><span class="s2">);</span>
+        <span class="s1">subtitleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">subtitleLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Name Label</span>
+        <span class="s1">JLabel nameLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Name:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">2</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">nameLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Name Field</span>
+        <span class="s1">nameField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">nameField</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">textFieldSize</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">nameField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Address Label</span>
+        <span class="s1">JLabel addressLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Address:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">3</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">addressLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Address Field</span>
+        <span class="s1">addressField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">addressField</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">textFieldSize</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">addressField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Contact Number Label</span>
+        <span class="s1">JLabel contactNumLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Contact Number:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">4</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">contactNumLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Contact Number Field</span>
+        <span class="s1">contactNumField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">contactNumField</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">textFieldSize</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">contactNumField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Email Label</span>
+        <span class="s1">JLabel emailLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Email:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">5</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">emailLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Email Field</span>
+        <span class="s1">emailField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextField</span><span class="s2">();</span>
+        <span class="s1">emailField</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">textFieldSize</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">emailField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Password Label</span>
+        <span class="s1">JLabel passwordLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Password:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">6</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">passwordLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Password Field</span>
+        <span class="s1">passwordField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPasswordField</span><span class="s2">();</span>
+        <span class="s1">passwordField</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">textFieldSize</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">passwordField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Confirm Password Label</span>
+        <span class="s1">JLabel confirmPasswordLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Confirm Password:&quot;</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">7</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">confirmPasswordLabel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Confirm Password Field</span>
+        <span class="s1">confirmPasswordField </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPasswordField</span><span class="s2">();</span>
+        <span class="s1">confirmPasswordField</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s1">textFieldSize</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridx </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">confirmPasswordField</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Register Button</span>
+        <span class="s1">JButton registerButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Register&quot;</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">registerButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">registerUser</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">8</span><span class="s2">;</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridwidth </span><span class="s2">= </span><span class="s3">2</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">registerButton</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s4">// Back to Login Button</span>
+        <span class="s1">JPanel backToLoginPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">());</span>
+        <span class="s1">JLabel backToLoginLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Already have an account?&quot;</span><span class="s2">);</span>
+        <span class="s1">JButton backToLoginButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Login&quot;</span><span class="s2">);</span>
+        <span class="s1">backToLoginButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLUE</span><span class="s2">);</span>
+        <span class="s1">backToLoginButton</span><span class="s2">.</span><span class="s1">setBorderPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">backToLoginButton</span><span class="s2">.</span><span class="s1">setContentAreaFilled</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">backToLoginButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">backToLoginButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">JFrame parentFrame </span><span class="s2">= (</span><span class="s1">JFrame</span><span class="s2">) </span><span class="s1">SwingUtilities</span><span class="s2">.</span><span class="s1">getWindowAncestor</span><span class="s2">(</span><span class="s1">Register</span><span class="s2">.</span><span class="s0">this</span><span class="s2">);</span>
+                <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Login</span><span class="s2">());</span>
+                <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">revalidate</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s1">backToLoginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">backToLoginLabel</span><span class="s2">);</span>
+        <span class="s1">backToLoginPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">backToLoginButton</span><span class="s2">);</span>
+        <span class="s1">gbc</span><span class="s2">.</span><span class="s1">gridy </span><span class="s2">= </span><span class="s3">9</span><span class="s2">;</span>
+        <span class="s1">registerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">backToLoginPanel</span><span class="s2">, </span><span class="s1">gbc</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">registerPanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createImagePanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel imagePanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">imagePanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">); </span><span class="s4">// Set the background color</span>
+
+        <span class="s4">// Add the &quot;Car Selling&quot; label with top margin</span>
+        <span class="s1">JLabel carNameLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Car Selling&quot;</span><span class="s2">);</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s5">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s3">50</span><span class="s2">));</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">carNameLabel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s3">20</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">));</span>
+        <span class="s1">imagePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">carNameLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s4">// Add the image</span>
+        <span class="s1">JLabel imageLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">();</span>
+        <span class="s1">imageLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">ImageIcon carImage </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s5">&quot;assets/registerBanner.png&quot;</span><span class="s2">);</span>
+        <span class="s1">imageLabel</span><span class="s2">.</span><span class="s1">setIcon</span><span class="s2">(</span><span class="s1">carImage</span><span class="s2">);</span>
+        <span class="s1">imagePanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">imageLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">imagePanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">registerUser</span><span class="s2">() {</span>
+        <span class="s1">String name </span><span class="s2">= </span><span class="s1">nameField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String address </span><span class="s2">= </span><span class="s1">addressField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String contactNum </span><span class="s2">= </span><span class="s1">contactNumField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String email </span><span class="s2">= </span><span class="s1">emailField</span><span class="s2">.</span><span class="s1">getText</span><span class="s2">();</span>
+        <span class="s1">String password </span><span class="s2">= </span><span class="s0">new </span><span class="s1">String</span><span class="s2">(</span><span class="s1">passwordField</span><span class="s2">.</span><span class="s1">getPassword</span><span class="s2">());</span>
+        <span class="s1">String confirmPassword </span><span class="s2">= </span><span class="s0">new </span><span class="s1">String</span><span class="s2">(</span><span class="s1">confirmPasswordField</span><span class="s2">.</span><span class="s1">getPassword</span><span class="s2">());</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">name</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">address</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">contactNum</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">email</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">password</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">confirmPassword</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;All fields must be filled out.&quot;</span><span class="s2">);</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">password</span><span class="s2">.</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">confirmPassword</span><span class="s2">)) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;Passwords do not match.&quot;</span><span class="s2">);</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s4">// Database credentials</span>
+        <span class="s1">String url </span><span class="s2">= </span><span class="s5">&quot;jdbc:mysql://localhost:3306/cardb&quot;</span><span class="s2">;</span>
+        <span class="s1">String user </span><span class="s2">= </span><span class="s5">&quot;root&quot;</span><span class="s2">; </span><span class="s4">// Change this if you have a different username</span>
+        <span class="s1">String pass </span><span class="s2">= </span><span class="s5">&quot;&quot;</span><span class="s2">; </span><span class="s4">// Change this if you have a password for the MySQL user</span>
+
+        <span class="s1">String checkQuery </span><span class="s2">= </span><span class="s5">&quot;SELECT COUNT(*) FROM users WHERE email = ?&quot;</span><span class="s2">;</span>
+        <span class="s1">String insertQuery </span><span class="s2">= </span><span class="s5">&quot;INSERT INTO users (name, address, contactNum, email, password) VALUES (?, ?, ?, ?, ?)&quot;</span><span class="s2">;</span>
+
+        <span class="s1">Connection connection </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s1">PreparedStatement checkStatement </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s1">PreparedStatement insertStatement </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">connection </span><span class="s2">= </span><span class="s1">DriverManager</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">(</span><span class="s1">url</span><span class="s2">, </span><span class="s1">user</span><span class="s2">, </span><span class="s1">pass</span><span class="s2">);</span>
+            <span class="s1">checkStatement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">checkQuery</span><span class="s2">);</span>
+            <span class="s1">checkStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s1">email</span><span class="s2">);</span>
+            <span class="s1">resultSet </span><span class="s2">= </span><span class="s1">checkStatement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">();</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">() &amp;&amp; </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s3">1</span><span class="s2">) &gt; </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;Email is already in use.&quot;</span><span class="s2">);</span>
+                <span class="s0">return</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s1">insertStatement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">insertQuery</span><span class="s2">);</span>
+            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s1">name</span><span class="s2">);</span>
+            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">2</span><span class="s2">, </span><span class="s1">address</span><span class="s2">);</span>
+            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">3</span><span class="s2">, </span><span class="s1">contactNum</span><span class="s2">);</span>
+            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">4</span><span class="s2">, </span><span class="s1">email</span><span class="s2">);</span>
+            <span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">setString</span><span class="s2">(</span><span class="s3">5</span><span class="s2">, </span><span class="s1">password</span><span class="s2">);</span>
+
+            <span class="s0">int </span><span class="s1">rowsInserted </span><span class="s2">= </span><span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">executeUpdate</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">rowsInserted </span><span class="s2">&gt; </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;User registered successfully!&quot;</span><span class="s2">);</span>
+                <span class="s1">SwingUtilities</span><span class="s2">.</span><span class="s1">invokeLater</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Runnable</span><span class="s2">() {</span>
+                    <span class="s0">public void </span><span class="s1">run</span><span class="s2">() {</span>
+                        <span class="s1">JFrame parentFrame </span><span class="s2">= (</span><span class="s1">JFrame</span><span class="s2">) </span><span class="s1">SwingUtilities</span><span class="s2">.</span><span class="s1">getWindowAncestor</span><span class="s2">(</span><span class="s1">Register</span><span class="s2">.</span><span class="s0">this</span><span class="s2">);</span>
+                        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Login</span><span class="s2">());</span>
+                        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">revalidate</span><span class="s2">();</span>
+                    <span class="s2">}</span>
+                <span class="s2">});</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+            <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s5">&quot;Error registering user: &quot; </span><span class="s2">+ </span><span class="s1">ex</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">} </span><span class="s0">finally </span><span class="s2">{</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">resultSet </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">close</span><span class="s2">();</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">checkStatement </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) </span><span class="s1">checkStatement</span><span class="s2">.</span><span class="s1">close</span><span class="s2">();</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">insertStatement </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) </span><span class="s1">insertStatement</span><span class="s2">.</span><span class="s1">close</span><span class="s2">();</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">connection </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">close</span><span class="s2">();</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException ex</span><span class="s2">) {</span>
+                <span class="s1">ex</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

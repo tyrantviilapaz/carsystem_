@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>Admin.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Admin.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">ActionListener</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">Admin </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JFrame parentFrame</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">Admin</span><span class="s2">(</span><span class="s1">JFrame parentFrame</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">parentFrame </span><span class="s2">= </span><span class="s1">parentFrame</span><span class="s2">;</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s3">// Create a panel for the title and logout button</span>
+        <span class="s1">JPanel topPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">topPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">);</span>
+
+        <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Car Selling System&quot;</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">24</span><span class="s2">));</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s1">JButton logoutButton </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s4">&quot;Logout&quot;</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">setFocusPainted</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">logoutButton</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActionListener</span><span class="s2">() {</span>
+            <span class="s1">@Override</span>
+            <span class="s0">public void </span><span class="s1">actionPerformed</span><span class="s2">(</span><span class="s1">ActionEvent e</span><span class="s2">) {</span>
+                <span class="s1">logout</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+
+        <span class="s1">topPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">topPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">logoutButton</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">EAST</span><span class="s2">);</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">topPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s1">JTabbedPane tabbedPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTabbedPane</span><span class="s2">();</span>
+
+        <span class="s1">carView carViewPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">carView</span><span class="s2">();</span>
+        <span class="s1">tabbedPane</span><span class="s2">.</span><span class="s1">addTab</span><span class="s2">(</span><span class="s4">&quot;Add Car&quot;</span><span class="s2">, </span><span class="s0">new </span><span class="s1">carAdd</span><span class="s2">(</span><span class="s1">carViewPanel</span><span class="s2">));</span>
+        <span class="s1">tabbedPane</span><span class="s2">.</span><span class="s1">addTab</span><span class="s2">(</span><span class="s4">&quot;View Cars&quot;</span><span class="s2">, </span><span class="s1">carViewPanel</span><span class="s2">);</span>
+        <span class="s1">tabbedPane</span><span class="s2">.</span><span class="s1">addTab</span><span class="s2">(</span><span class="s4">&quot;Manage Users&quot;</span><span class="s2">, </span><span class="s0">new </span><span class="s1">UserManagementView</span><span class="s2">(</span><span class="s0">true</span><span class="s2">)); </span><span class="s3">// Pass 'true' for isAdmin</span>
+        <span class="s1">tabbedPane</span><span class="s2">.</span><span class="s1">addTab</span><span class="s2">(</span><span class="s4">&quot;Sales&quot;</span><span class="s2">, </span><span class="s0">new </span><span class="s1">SalesView</span><span class="s2">()); </span><span class="s3">// Add the Sales tab</span>
+
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">tabbedPane</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">logout</span><span class="s2">() {</span>
+        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">setContentPane</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Login</span><span class="s2">());</span>
+        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">revalidate</span><span class="s2">();</span>
+        <span class="s1">parentFrame</span><span class="s2">.</span><span class="s1">repaint</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

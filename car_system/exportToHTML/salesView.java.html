@@ -1,0 +1,115 @@
+<html>
+<head>
+<title>salesView.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+salesView.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">border</span><span class="s2">.</span><span class="s1">EmptyBorder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">table</span><span class="s2">.</span><span class="s1">DefaultTableModel</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">Connection</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">PreparedStatement</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">ResultSet</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">sql</span><span class="s2">.</span><span class="s1">SQLException</span><span class="s2">;</span>
+
+<span class="s0">class </span><span class="s1">SalesView </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">JTable salesTable</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">DefaultTableModel tableModel</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">JLabel totalSalesLabel</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">SalesView</span><span class="s2">() {</span>
+        <span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+
+        <span class="s1">JPanel headerPanel </span><span class="s2">= </span><span class="s1">createHeaderPanel</span><span class="s2">();</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">headerPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s1">JPanel contentPanel </span><span class="s2">= </span><span class="s1">createContentPanel</span><span class="s2">();</span>
+        <span class="s1">add</span><span class="s2">(</span><span class="s1">contentPanel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s1">loadSalesData</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createHeaderPanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel headerPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">ORANGE</span><span class="s2">);</span>
+        <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s3">1080</span><span class="s2">, </span><span class="s3">100</span><span class="s2">));</span>
+
+        <span class="s1">JLabel titleLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Sales&quot;</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s3">50</span><span class="s2">));</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setForeground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">titleLabel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s3">20</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">));</span>
+
+        <span class="s1">headerPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">titleLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">headerPanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">JPanel createContentPanel</span><span class="s2">() {</span>
+        <span class="s1">JPanel contentPanel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BorderLayout</span><span class="s2">());</span>
+        <span class="s1">contentPanel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s3">20</span><span class="s2">, </span><span class="s3">20</span><span class="s2">, </span><span class="s3">20</span><span class="s2">, </span><span class="s3">20</span><span class="s2">));</span>
+
+        <span class="s1">String</span><span class="s2">[] </span><span class="s1">columnNames </span><span class="s2">= {</span><span class="s4">&quot;Sale ID&quot;</span><span class="s2">, </span><span class="s4">&quot;Customer Name&quot;</span><span class="s2">, </span><span class="s4">&quot;Car Model&quot;</span><span class="s2">, </span><span class="s4">&quot;Sale Price&quot;</span><span class="s2">, </span><span class="s4">&quot;Sale Date&quot;</span><span class="s2">};</span>
+        <span class="s1">tableModel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">DefaultTableModel</span><span class="s2">(</span><span class="s1">columnNames</span><span class="s2">, </span><span class="s3">0</span><span class="s2">);</span>
+        <span class="s1">salesTable </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTable</span><span class="s2">(</span><span class="s1">tableModel</span><span class="s2">);</span>
+        <span class="s1">salesTable</span><span class="s2">.</span><span class="s1">setRowHeight</span><span class="s2">(</span><span class="s3">30</span><span class="s2">);</span>
+
+        <span class="s1">JScrollPane scrollPane </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JScrollPane</span><span class="s2">(</span><span class="s1">salesTable</span><span class="s2">);</span>
+        <span class="s1">salesTable</span><span class="s2">.</span><span class="s1">setFillsViewportHeight</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+
+        <span class="s1">totalSalesLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s4">&quot;Total Sales: $0.00&quot;</span><span class="s2">);</span>
+        <span class="s1">totalSalesLabel</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s4">&quot;Arial&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s3">20</span><span class="s2">));</span>
+        <span class="s1">totalSalesLabel</span><span class="s2">.</span><span class="s1">setHorizontalAlignment</span><span class="s2">(</span><span class="s1">SwingConstants</span><span class="s2">.</span><span class="s1">RIGHT</span><span class="s2">);</span>
+        <span class="s1">totalSalesLabel</span><span class="s2">.</span><span class="s1">setBorder</span><span class="s2">(</span><span class="s0">new </span><span class="s1">EmptyBorder</span><span class="s2">(</span><span class="s3">10</span><span class="s2">, </span><span class="s3">10</span><span class="s2">, </span><span class="s3">10</span><span class="s2">, </span><span class="s3">10</span><span class="s2">));</span>
+
+        <span class="s1">contentPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">scrollPane</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s1">contentPanel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">totalSalesLabel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">contentPanel</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loadSalesData</span><span class="s2">() {</span>
+        <span class="s1">tableModel</span><span class="s2">.</span><span class="s1">setRowCount</span><span class="s2">(</span><span class="s3">0</span><span class="s2">); </span><span class="s5">// Clear existing data</span>
+        <span class="s0">double </span><span class="s1">totalSales </span><span class="s2">= </span><span class="s3">0.0</span><span class="s2">;</span>
+        <span class="s1">String query </span><span class="s2">= </span><span class="s4">&quot;SELECT saleId, customerName, carModel, salePrice, saleDate FROM sales&quot;</span><span class="s2">;</span>
+        <span class="s0">try </span><span class="s2">(</span><span class="s1">Connection connection </span><span class="s2">= </span><span class="s1">DatabaseUtils</span><span class="s2">.</span><span class="s1">getConnection</span><span class="s2">();</span>
+             <span class="s1">PreparedStatement statement </span><span class="s2">= </span><span class="s1">connection</span><span class="s2">.</span><span class="s1">prepareStatement</span><span class="s2">(</span><span class="s1">query</span><span class="s2">);</span>
+             <span class="s1">ResultSet resultSet </span><span class="s2">= </span><span class="s1">statement</span><span class="s2">.</span><span class="s1">executeQuery</span><span class="s2">()) {</span>
+
+            <span class="s0">while </span><span class="s2">(</span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">next</span><span class="s2">()) {</span>
+                <span class="s1">Object</span><span class="s2">[] </span><span class="s1">rowData </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Object</span><span class="s2">[</span><span class="s3">5</span><span class="s2">];</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">0</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getInt</span><span class="s2">(</span><span class="s4">&quot;saleId&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">1</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;customerName&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">2</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getString</span><span class="s2">(</span><span class="s4">&quot;carModel&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">3</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s4">&quot;salePrice&quot;</span><span class="s2">);</span>
+                <span class="s1">rowData</span><span class="s2">[</span><span class="s3">4</span><span class="s2">] = </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDate</span><span class="s2">(</span><span class="s4">&quot;saleDate&quot;</span><span class="s2">);</span>
+
+                <span class="s1">totalSales </span><span class="s2">+= </span><span class="s1">resultSet</span><span class="s2">.</span><span class="s1">getDouble</span><span class="s2">(</span><span class="s4">&quot;salePrice&quot;</span><span class="s2">);</span>
+
+                <span class="s1">tableModel</span><span class="s2">.</span><span class="s1">addRow</span><span class="s2">(</span><span class="s1">rowData</span><span class="s2">);</span>
+            <span class="s2">}</span>
+
+            <span class="s1">totalSalesLabel</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s4">&quot;Total Sales: $&quot; </span><span class="s2">+ </span><span class="s1">totalSales</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">SQLException e</span><span class="s2">) {</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">();</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s4">&quot;Error loading sales data: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
